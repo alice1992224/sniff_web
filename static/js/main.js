@@ -161,6 +161,7 @@ function send_data(file_content) {
     var result = ajax_obj.responseText; 
     result = result.replace(/(?:\r\n|\r|\n)/g, '<br />');
     htmlResult = $.parseHTML(result);
+    $('.result-block > p').text('');
     $('.result-block > p').append(htmlResult);
     console.log(htmlResult);
     $('#result_block').removeClass('hidden');
