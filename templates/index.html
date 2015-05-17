@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Dark layout w/sidebar drawer menu</title>
+    <meta name="generator" content="Bootply" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="{{STATIC_URL}}css/bootstrap.css" rel=stylesheet>
+    <!--[if lt IE 9]>
+            <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    <link href="{{STATIC_URL}}css/styles.css" rel="stylesheet">
+    <link href="{{STATIC_URL}}css/form.css" rel=stylesheet>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+
+<body>
+    <div class="page-container">
+        <!-- top navbar -->
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container" style="width:100%">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Auto handover</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row row-offcanvas row-offcanvas-left">
+                <!-- sidebar -->
+                <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+                    <div data-spy="affix" data-offset-top="45" data-offset-bottom="90">
+                        <ul class="nav" id="sidebar-nav">
+                            <li id="home_li"><a href="#">Home</a></li>
+                            <li id="config_upload_li"><a href="#">Config Upload</a></li>                            
+                        </ul>
+                    </div>
+                </div>
+                <!-- main area -->
+                <div class="col-xs-12 col-sm-9" data-spy="scroll" data-target="#sidebar-nav">
+
+                    <div id="home_block">
+                        <div id="sniff" class="container auth" style="width:100%">
+                            <h2 class="text-center">Sniff Parameters</h2>
+                            <div id="big-form" class="well auth-box">
+                                <form method="POST" action="/work">
+                                    <fieldset>
+                                        <!-- Sniff Type Selector -->
+                                        <div class="form-group form-group-sniff-type">
+                                            <label class=" control-label" for="selectbasic">Type</label>
+                                            <div class="">
+                                                <select id="selectbasic" class="sniff_type form-control" name="selectbasic" class="form-control">
+                                                    <option value="realtime">Realtime Capture</option>
+                                                    <option value="file">Packet Trace</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- File Button -->
+                                        <div class="form-group form-group-input-file hidden">
+                                            <label class=" control-label" for="filebutton">Input File</label>
+                                            <div class="">
+                                                <input id="filebutton" name="filebutton" class="input-file" type="file">
+                                            </div>
+                                        </div>
+                                        <!-- Text input-->
+                                        <div class="form-group form-group-log-file">
+                                            <label class=" control-label" for="textinput">Log File</label>
+                                            <div class="">
+                                                <input id="textinput" class="log form-control input-md" name="log" placeholder="Enter the name of log file." type="text" value="sniff.log">
+                                            </div>
+                                        </div>
+                                        <!-- Text input-->
+                                        <div class="form-group form-group-interface">
+                                            <label class=" control-label" for="textinput">Interface</label>
+                                            <div class="">
+                                                <select id="selectbasic" class="interface form-control" name="selectbasic">
+                                                    {% for iface in iface_list %}
+                                                    <option value={{iface}}>{{iface}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="attenuator" class="container auth container-attenuator" style="width:100%">
+                            <h2 class="text-center">Attenuator Parameters</h2>
+                            <div id="big-form" class="well auth-box">
+                                <form>
+                                    <fieldset>
+                                        <!-- Select Basic -->
+                                        <div class="form-group">
+                                            <label class=" control-label" for="selectbasic">Mode</label>
+                                            <div class="">
+                                                <select id="selectbasic" name="selectbasic" class="form-control mode">
+                                                    <option value="mode1">強迫斷線</option>
+                                                    <option value="mode2">漸漸遠離</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- Text input-->
+                                        <div class="form-group">
+                                            <label class=" control-label" for="textinput">Dev</label>
+                                            <div class="">
+                                                <input id="textinput" class="dev form-control input-md" name="dev" placeholder="Which of tty  you connect to attenuator?" type="text" value="/dev/ttyUSB1">
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <!-- Button -->
+                        <div class="container">
+                            <button id="singlebutton" name="singlebutton" class="btn btn-primary" type="submit" onclick="check_input()">Run</button>
+                        </div>
+                        <div id="result_block" class="run-block hidden">
+                          <hr class="style-three" />
+                          <div class="col-xs-12 col-sm-9 result-block" data-spy="scroll" data-target="#sidebar-nav">
+                              <h1 id="section1">Result</h1>
+                              <p></p>
+                              <button id="downloadbutton" class="btn btn-primary" type="submit" onclick="window.open('../static/result_file')">Download</button>
+                          </div>
+                        </div>
+                     </div> 
+                      
+                    <div id="config_upload_block" class="container auth hidden" style="width:100%">
+                        <h2 class="text-center">Config File Setting</h2>
+                        <div id="big-form" class="well auth-box">
+                            <form method="POST" action="/work">
+                                <fieldset>
+                                    <!-- File Button -->
+                                    <div class="form-group form-group-config-file">
+                                        <label class="control-label" for="filebutton">Config File</label>
+                                        <div class="">
+                                            <input id="configfilebutton" name="filebutton" class="config-file" type="file" onchange="readConfigFile()">
+                                        </div>
+                                    </div>
+                                    <!-- Text input-->
+                                    <div class="form-group form-group-config-content">
+                                        <textarea class="config_content form-control" style="overflow:hidden" readonly=""></textarea>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <button id="saveconfigbutton" class="btn btn-primary hidden" type="submit" onclick="saveConfigFile()">Save</button>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+                <!-- /.col-xs-12 main -->
+            </div>
+            <!--/.row-->
+        </div>
+        <!--/.container-->
+    </div>
+    <!--/.page-container-->
+    <div id="footer">
+        <!--footer-->
+        <div class="container">
+            <div class="row">
+                <ul class="list-unstyled">
+                    <li class="col-sm-4 col-xs-6">
+                        <a href="#">@ NCTU 衛普 Tzu-Yi Li</a>
+                    </li>
+                </ul>
+            </div>
+            <!--/row-->
+        </div>
+        <!--/container-->
+    </div>
+    <!--/footer-->
+    <!-- script references -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.cookie.js"></script>
+    <script src="{{STATIC_URL}}js/form.js"></script>
+    <script src="{{STATIC_URL}}js/scripts.js"></script>
+    <script src="{{STATIC_URL}}js/main.js"></script>
+    <script>
+    $(document).ready(function() {
+        sniff_type_select_event_handler();
+
+        $( "#config_upload_li" ).click(function() {
+            
+            $('#home_block').addClass('hidden');
+            $('#config_upload_block').removeClass('hidden');
+            $('#saveconfigbutton').addClass('hidden');
+            showConfigFile();
+        });
+
+        $( "#home_li" ).click(function() {
+            $('#config_upload_block').addClass('hidden');
+            $('#home_block').removeClass('hidden');
+            $('#saveconfigbutton').addClass('hidden');
+        });
+
+    });
+
+    </script>
+</body>
+
+</html>
