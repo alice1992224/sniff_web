@@ -8,7 +8,7 @@ import netifaces
 
 # Create your views here.
 
-python_path = '../venv/bin/python2.7'
+python_path = './venv/bin/python2.7'
 
 def work(request):
 
