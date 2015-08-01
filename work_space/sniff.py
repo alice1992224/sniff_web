@@ -3,6 +3,9 @@
     sniff 類別，讓別的程式 import 
 """
 
+import sys
+sys.path.append('venv/lib/python2.7/site-packages/')
+
 import scapy
 from scapy.all import *
 import time

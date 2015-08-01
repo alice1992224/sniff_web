@@ -6,12 +6,10 @@ import subprocess
 import time
 import netifaces
 import configparser 
-import sys
 
 # Create your views here.
 
 python_path = './venv/bin/python2.7'
-sys.path.append('./venv/lib/python2.7/site-packages/')
 
 def work(request):
 
