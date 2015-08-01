@@ -1,15 +1,8 @@
 #!/bin/bash
-python3 -m venv venv --without-pip
-source venv/bin/activate
-wget https://bootstrap.pypa.io/get-pip.py
-python3 get-pip.py
-rehash
-ln -s /usr/bin/python2.7 venv/bin/python2.7
-source venv/bin/activate
-pip3 install -r requirements.txt
-wget scapy.net -O scapy-latest.zip
-unzip scapy-latest.zip
-cd scapy-2.*
-sudo ../venv/bin/python2.7 setup.py install
-cd ..
+sudo apt-get update
+sudo apt-get install git
 git clone https://github.com/alice1992224/sniff_web.git
+cd sniff_web
+source venv/bin/activate
+ip=`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1'`
+sudo ./venv/bin/python3 manage.py runserver $ip:7778
