@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
-    <title>Dark layout w/sidebar drawer menu</title>
+    <title>Auto Handover</title>
     <meta name="generator" content="Bootply" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="{{STATIC_URL}}css/bootstrap.css" rel=stylesheet>
@@ -14,6 +14,34 @@
     <link href="{{STATIC_URL}}css/styles.css" rel="stylesheet">
     <link href="{{STATIC_URL}}css/form.css" rel=stylesheet>
     <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>-->
+    <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+    <script src="{{STATIC_URL}}js/jquery.cookie.js"></script>
+    <script src="{{STATIC_URL}}js/form.js"></script>
+    <script src="{{STATIC_URL}}js/scripts.js"></script>
+    <script src="{{STATIC_URL}}js/main.js"></script>
+    <script>
+    $(document).ready(function() {
+        sniff_type_select_event_handler();
+        add_subtype_event_handler();
+        remove_subtype_event_handler();
+        $( "#config_upload_li" ).click(function() {
+            get_config_file();
+            console.log('[Info] To Config Setting.');
+            $('#home_block').addClass('hidden');
+            $('#config_upload_block').removeClass('hidden');
+            $('#saveconfigbutton').addClass('hidden');
+            //showConfigFile();
+        });
+
+        $( "#home_li" ).click(function() {
+            $('#config_upload_block').addClass('hidden');
+            $('#home_block').removeClass('hidden');
+            $('#saveconfigbutton').addClass('hidden');
+        });
+    });
+
+    </script>
 </head>
 
 <body>
@@ -133,25 +161,159 @@
                      </div> 
                       
                     <div id="config_upload_block" class="container auth hidden" style="width:100%">
-                        <h2 class="text-center">Config File Setting</h2>
+                        <h2 class="text-center">General Infomation</h2>
                         <div id="big-form" class="well auth-box">
                             <form method="POST" action="/work">
-                                <fieldset>
-                                    <!-- File Button -->
+                                <fieldset id="basic_info">
+                                    <!-- Config File Upload
                                     <div class="form-group form-group-config-file">
                                         <label class="control-label" for="filebutton">Config File</label>
                                         <div class="">
                                             <input id="configfilebutton" name="filebutton" class="config-file" type="file" onchange="readConfigFile()">
                                         </div>
                                     </div>
-                                    <!-- Text input-->
                                     <div class="form-group form-group-config-content">
                                         <textarea class="config_content form-control" style="overflow:hidden" readonly=""></textarea>
+                                    </div>
+                                    -->
+                                    <div class="form-group">
+                                        <label class=" control-label" for="textinput">STA MAC</label>
+                                        <div class="">
+                                            <input id="sta_mac" class="form-control input-md" 
+                                            placeholder="The mac address of station." type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" control-label" for="textinput">OLD AP MAC</label>
+                                        <div class="">
+                                            <input id="old_ap_mac" class="form-control input-md" 
+                                            placeholder="The mac address of old access point." type="text">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class=" control-label" for="textinput">NEW AP MAC</label>
+                                        <div class="">
+                                            <input id="new_ap_mac" class="form-control input-md" 
+                                            placeholder="The mac address of new access point." type="text">
+                                        </div>
                                     </div>
                                 </fieldset>
                             </form>
                         </div>
-                        <button id="saveconfigbutton" class="btn btn-primary hidden" type="submit" onclick="saveConfigFile()">Save</button>
+                        <h3 class="text-center">Start Condition</h3>
+                        <div id="big-form" class="well auth-box">
+                            <form id="start_condition">
+                                <fieldset>
+                                    <div id="start_cond_trigger_event" class="form-group">
+                                        <label class=" control-label" for="selectbasic">Trigger Event</label>
+                                        <div class="trigger-event">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+
+                                    <div id="start_cond_possible_init" class="form-group">
+                                        <label class="control-label" for="selectbasic">Possible Occurrence Time (From)</label>
+                                        <div class="">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+                                    <div id="start_cond_possible_end" class="form-group">
+                                        <label class=" control-label" for="selectbasic">Possible Occurrence Time (To)</label>
+                                        <div class="">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div> <!-- end of start condition -->
+                        <h3 class="text-center">End Condition</h3>
+                        <div id="big-form" class="well auth-box">
+                            <form id="end_condition">
+                                <fieldset>
+                                    <div id="end_cond_trigger_event" class="form-group">
+                                        <label class=" control-label" for="selectbasic">Trigger Event</label>
+                                        <div class="">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+
+                                    <div id="end_cond_possible_init" class="form-group">
+                                        <label class="control-label" for="selectbasic">Possible Occurrence Time (From)</label>
+                                        <div class="">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+                                    <div id="end_cond_possible_end" class="form-group">
+                                        <label class=" control-label" for="selectbasic">Possible Occurrence Time (To)</label>
+                                        <div class="">
+                                            <select id="selectbasic" name="selectbasic" class="form-control subtype-select">
+                                                {% for subtype in subtype_list %}
+                                                <option value="mode1">{{subtype}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button class="btn btn-primary add-button">add</button>
+                                            <button class="btn btn-primary remove-button">remove</button><br/>
+                                        </div>
+                                        <div class="select-subtype-list">
+                                            <ul>
+                                            </ul>    
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <!--<button id="save_config_button" class="btn btn-primary" type="submit" onclick="saveUpdateConfigFile()">Save</button>-->
+                        <button id="save_config_button" class="btn btn-primary" type="submit" onclick="saveConfigFile()">Save</button>
                         <div class="clearfix"></div>
                     </div>
                 </div>
@@ -178,33 +340,7 @@
     </div>
     <!--/footer-->
     <!-- script references -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
-    <script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-    <script src="{{STATIC_URL}}js/jquery.cookie.js"></script>
-    <script src="{{STATIC_URL}}js/form.js"></script>
-    <script src="{{STATIC_URL}}js/scripts.js"></script>
-    <script src="{{STATIC_URL}}js/main.js"></script>
-    <script>
-    $(document).ready(function() {
-        sniff_type_select_event_handler();
 
-        $( "#config_upload_li" ).click(function() {
-            
-            $('#home_block').addClass('hidden');
-            $('#config_upload_block').removeClass('hidden');
-            $('#saveconfigbutton').addClass('hidden');
-            showConfigFile();
-        });
-
-        $( "#home_li" ).click(function() {
-            $('#config_upload_block').addClass('hidden');
-            $('#home_block').removeClass('hidden');
-            $('#saveconfigbutton').addClass('hidden');
-        });
-
-    });
-
-    </script>
 </body>
 
 </html>

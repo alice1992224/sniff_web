@@ -99,12 +99,12 @@ function readConfigFile() {
     console.log('leave readBlob');
 }
 
-function saveConfigFile(){
+function saveUpdateConfigFile(){
     var file_content = $('.config_content').text();
     //info_dict = JSON.stringify(info_dict);
 
     var ajax_obj = $.ajax({
-        url: cur_url+"save_config_file/",
+        url: cur_url+"save_update_config_file/",
         type: "POST",
         async: false,
         data: { file_content:file_content },
@@ -118,6 +118,7 @@ function saveConfigFile(){
     alert('Your config is saved.');
 }
 
+
 function handleFileSelect(evt) {
     console.log('in handleFileSelect');
     var file = evt.target;
@@ -129,7 +130,6 @@ function handleFileSelect(evt) {
 function send_data(file_content) {
 
     console.log('in send_data');
-
     var sniff_type = $('.sniff_type').find('option:selected').val();
     var info_dict = {};
 
@@ -165,5 +165,88 @@ function send_data(file_content) {
     $('.result-block > p').append(htmlResult);
     console.log(htmlResult);
     $('#result_block').removeClass('hidden');
-
 };
+
+function add_subtype_event_handler(){
+    $('.add-button').click(function() {
+        var outer_block = $(this).parents().filter('.form-group');
+        var select_subtype = outer_block.find('select option:selected').text();
+        if( outer_block.find('.select-subtype-list > ul > li[name="'+select_subtype+'"]').length == 0){
+            console.log('[Info] Add '+select_subtype+' to ['+outer_block.attr('id')+']');
+            var target_ul = outer_block.find('.select-subtype-list > ul');
+            $('<li>',{ 'name':select_subtype, 'text':select_subtype }).appendTo(target_ul);
+        }
+    });
+}
+
+function remove_subtype_event_handler(){
+    $('.remove-button').click(function() {
+        var outer_block = $(this).parents().filter('.form-group');
+        var select_subtype = outer_block.find('select option:selected').text();
+        console.log('[Info] Remove '+select_subtype+' from ['+outer_block.attr('id')+']');
+        outer_block.find('.select-subtype-list > ul > li[name="'+select_subtype+'"]').remove();
+    });
+}
+
+function saveConfigFile(){
+    var data = {
+        'start_cond_trigger_event':[], 
+        'start_cond_possible_init':[], 
+        'start_cond_possible_end':[], 
+        'end_cond_trigger_event':[], 
+        'end_cond_possible_init':[], 
+        'end_cond_possible_end':[], 
+    };
+
+    data['sta_mac'] = $('#basic_info #sta_mac').val();
+    data['old_ap_mac'] = $('#basic_info #old_ap_mac').val();
+    data['new_ap_mac'] = $('#basic_info #new_ap_mac').val();
+
+    $.each(Object.keys(data), function(index, value){
+        $('#'+value).find('.select-subtype-list li').each(function(index){
+            data[value].push($(this).text());
+        });
+    });
+
+    var config_data = JSON.stringify(data);
+    var ajax_obj = $.ajax({
+        url: "/save_config_file/",
+        type: "POST",
+        async: false,
+        data: { config_data: config_data },
+        error: function(xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+}
+
+function get_config_file(){
+    console.log('get config file.');
+    var ajax_obj = $.ajax({
+        url: "/get_config_file/",
+        type: "GET",
+        async: false,
+        error: function(xhr, errmsg, err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: " + errmsg +
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+    var data = $.parseJSON(ajax_obj.responseText); 
+
+    var cond_dict = data['cond_data'];
+    for (var key in cond_dict) {
+        var target_ul = $('#'+key+' ul');
+        target_ul.empty();
+        $.each(cond_dict[key], function(index, value){
+            $('<li>',{ 'name':value, 'text':value }).appendTo(target_ul);
+        });
+    }
+
+    var basic_dict = data['basic_data'];
+    for (var key in basic_dict) {
+        $('#basic_info #'+key).val(basic_dict[key]);
+    }
+}

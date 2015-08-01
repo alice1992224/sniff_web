@@ -12,4 +12,6 @@ urlpatterns = patterns('',
     url(r'^work/$', 'main.views.work'),
     url(r'^read_config_file/$', 'main.views.read_config_file'),
     url(r'^save_config_file/$', 'main.views.save_config_file'),
+    url(r'^get_config_file/$', 'main.views.get_config_file'),
+    url(r'^save_update_config_file/$', 'main.views.save_update_config_file'),
 )

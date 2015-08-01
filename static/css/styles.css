@@ -152,3 +152,15 @@ hr.style-three {
     background: #999;
 }
 
+.subtype-select {
+  width: 75%;
+  float: left;
+  margin-right: 10px;
+}
+
+#save_config_button {
+    width:100%;
+    height:40px;
+    margin-top:10px;
+}
+
